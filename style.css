@@ -1,0 +1,720 @@
+/* ==========================================
+   БАЗА
+   ========================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg: #0a0710;
+    --text: #f0eaf5;
+    --muted: #9d8fae;
+    --accent1: #ff4fa3;   /* розовый */
+    --accent2: #14e0c8;   /* бирюзовый */
+    --accent3: #a855f7;   /* фиолетовый */
+    --glass: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.09);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+    line-height: 1.6;
+    position: relative;
+}
+
+.muted { color: var(--muted); font-size: 15px; }
+
+/* ==========================================
+   КРАСИВЫЙ ФОН
+   ========================================== */
+.bg-gradient,
+.bg-aurora,
+.bg-stars,
+.bg-orb,
+.bg-grid,
+.bg-vignette,
+.bg-noise {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* 1. Базовый переливающийся градиент */
+.bg-gradient {
+    z-index: -10;
+    background:
+        radial-gradient(ellipse 80% 60% at 15% 10%, rgba(255, 79, 163, 0.20), transparent 55%),
+        radial-gradient(ellipse 70% 60% at 85% 20%, rgba(20, 224, 200, 0.16), transparent 55%),
+        radial-gradient(ellipse 90% 70% at 50% 100%, rgba(168, 85, 247, 0.18), transparent 60%),
+        linear-gradient(160deg, #0a0710 0%, #120a1f 45%, #071318 100%);
+    background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
+    animation: gradientShift 24s ease-in-out infinite alternate;
+}
+
+@keyframes gradientShift {
+    0%   { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; }
+    100% { background-position: 100% 50%, 0% 100%, 50% 0%, 0 0; }
+}
+
+/* 2. Северное сияние */
+.bg-aurora {
+    z-index: -9;
+    opacity: 0.55;
+    background:
+        conic-gradient(from 120deg at 30% 30%,
+            transparent 0deg,
+            rgba(255, 79, 163, 0.35) 90deg,
+            transparent 160deg,
+            rgba(20, 224, 200, 0.35) 250deg,
+            transparent 320deg),
+        conic-gradient(from 300deg at 75% 70%,
+            transparent 0deg,
+            rgba(168, 85, 247, 0.3) 100deg,
+            transparent 200deg,
+            rgba(20, 224, 200, 0.25) 300deg,
+            transparent 360deg);
+    filter: blur(80px);
+    animation: auroraSpin 40s linear infinite;
+}
+
+@keyframes auroraSpin {
+    0%   { transform: rotate(0deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1.1); }
+}
+
+/* 3. Звёздная пыль */
+.bg-stars {
+    z-index: -8;
+    background-image:
+        radial-gradient(1.5px 1.5px at 20% 30%, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(1px 1px at 70% 15%, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(1.5px 1.5px at 45% 70%, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 90% 55%, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1.2px 1.2px at 10% 85%, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(1px 1px at 60% 90%, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1.5px 1.5px at 35% 45%, rgba(255, 255, 255, 0.85), transparent),
+        radial-gradient(1px 1px at 80% 80%, rgba(255, 255, 255, 0.6), transparent);
+    background-repeat: repeat;
+    background-size: 400px 400px;
+    opacity: 0.6;
+    animation: starsTwinkle 5s ease-in-out infinite alternate;
+}
+
+.bg-stars::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 15% 65%, rgba(20, 224, 200, 0.9), transparent),
+        radial-gradient(1.5px 1.5px at 55% 25%, rgba(255, 79, 163, 0.9), transparent),
+        radial-gradient(1px 1px at 85% 35%, rgba(168, 85, 247, 0.9), transparent),
+        radial-gradient(1.2px 1.2px at 30% 90%, rgba(20, 224, 200, 0.8), transparent);
+    background-size: 500px 500px;
+    animation: starsTwinkle 7s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes starsTwinkle {
+    0%   { opacity: 0.35; }
+    100% { opacity: 0.75; }
+}
+
+/* 4. Светящиеся орбы (с параллаксом через --px / --py) */
+.bg-orb {
+    border-radius: 50%;
+    filter: blur(110px);
+    opacity: 0.5;
+    z-index: -7;
+    animation: floatOrb 20s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+.orb-1 {
+    background: #ff4fa3;
+    width: 520px; height: 520px;
+    top: -180px; left: -160px;
+}
+
+.orb-2 {
+    background: #14e0c8;
+    width: 600px; height: 600px;
+    bottom: -220px; right: -200px;
+    animation-delay: -7s;
+}
+
+.orb-3 {
+    background: #a855f7;
+    width: 440px; height: 440px;
+    top: 40%; left: 50%;
+    opacity: 0.3;
+    animation-delay: -14s;
+}
+
+@keyframes floatOrb {
+    0%   { transform: translate(var(--px, 0px), var(--py, 0px)) translate(0, 0) scale(1); }
+    50%  { transform: translate(var(--px, 0px), var(--py, 0px)) translate(70px, -50px) scale(1.12); }
+    100% { transform: translate(var(--px, 0px), var(--py, 0px)) translate(-40px, 60px) scale(0.95); }
+}
+
+/* 5. Перспективная сетка */
+.bg-grid {
+    z-index: -6;
+    background-image:
+        linear-gradient(rgba(20, 224, 200, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 79, 163, 0.10) 1px, transparent 1px);
+    background-size: 70px 70px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 45%, black 20%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 45%, black 20%, transparent 80%);
+    animation: gridMove 30s linear infinite;
+}
+
+@keyframes gridMove {
+    0%   { background-position: 0 0, 0 0; }
+    100% { background-position: 70px 70px, 70px 70px; }
+}
+
+/* 6. Виньетка */
+.bg-vignette {
+    z-index: -5;
+    background: radial-gradient(ellipse 100% 100% at 50% 50%,
+        transparent 40%,
+        rgba(10, 7, 16, 0.85) 100%);
+}
+
+/* 7. Шум */
+.bg-noise {
+    z-index: -4;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ==========================================
+   ГРАДИЕНТНЫЙ ТЕКСТ
+   ========================================== */
+.gradient-text {
+    background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3), var(--accent1));
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientMove 6s linear infinite;
+}
+
+@keyframes gradientMove {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+/* ==========================================
+   ШАПКА
+   ========================================== */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(10, 7, 16, 0.5);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #fff;
+}
+
+.logo span {
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.nav { display: flex; gap: 30px; }
+
+.nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+    position: relative;
+}
+
+.nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    transition: width 0.3s;
+    border-radius: 2px;
+}
+
+.nav a:hover { color: #fff; }
+.nav a:hover::after { width: 100%; }
+.nav a.active { color: #fff; }
+.nav a.active::after { width: 100%; }
+
+/* ==========================================
+   HERO
+   ========================================== */
+.hero {
+    text-align: center;
+    padding: 120px 20px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    padding: 8px 18px;
+    border-radius: 100px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #14e0c8;
+    box-shadow: 0 0 10px #14e0c8;
+    animation: pulseDot 2s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+}
+
+.hero-title {
+    font-size: clamp(40px, 8vw, 80px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 25px;
+}
+
+.hero-sub {
+    font-size: clamp(16px, 2vw, 19px);
+    color: var(--muted);
+    max-width: 620px;
+    margin: 0 auto 40px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ==========================================
+   КНОПКИ
+   ========================================== */
+.btn {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: #0a0710;
+    font-weight: 800;
+    box-shadow: 0 8px 30px rgba(255, 79, 163, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(20, 224, 200, 0.5);
+}
+
+.btn-ghost {
+    background: var(--glass);
+    color: var(--text);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.btn-ghost:hover {
+    border-color: var(--accent2);
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px rgba(20, 224, 200, 0.25);
+}
+
+.hero-scroll {
+    margin-top: 70px;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    animation: bounceDown 2s infinite;
+}
+
+@keyframes bounceDown {
+    0%, 100% { transform: translateY(0); opacity: 0.6; }
+    50%      { transform: translateY(8px); opacity: 1; }
+}
+
+/* ==========================================
+   СЕКЦИИ
+   ========================================== */
+.section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 70px 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.section-title {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 50px;
+    letter-spacing: -0.5px;
+}
+
+/* ==========================================
+   СТЕКЛЯННЫЕ КАРТОЧКИ
+   ========================================== */
+.glass-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 30px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 1px;
+    background: linear-gradient(135deg,
+        rgba(255, 79, 163, 0.5),
+        transparent 40%,
+        transparent 60%,
+        rgba(20, 224, 200, 0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+}
+
+.glass-card:hover {
+    transform: translateY(-6px);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.glass-card:hover::before { opacity: 1; }
+
+/* ==========================================
+   ОБО МНЕ
+   ========================================== */
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.about-card { text-align: center; }
+
+.avatar {
+    font-size: 54px;
+    margin-bottom: 18px;
+    display: inline-block;
+    filter: drop-shadow(0 0 20px rgba(255, 79, 163, 0.6));
+}
+
+.about-card h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   СТАТИСТИКА
+   ========================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.stat { text-align: center; padding: 40px 20px; }
+
+.stat-value {
+    font-size: 46px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+/* ==========================================
+   НАВЫКИ
+   ========================================== */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.skill { padding: 24px; }
+
+.skill-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+.pct {
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+}
+
+.bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    box-shadow: 0 0 15px rgba(20, 224, 200, 0.7);
+    transition: width 1.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* ==========================================
+   ОРУЖИЕ
+   ========================================== */
+.weapons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+}
+
+.weapon-card {
+    text-align: center;
+    padding: 30px 15px;
+}
+
+.weapon-icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 12px rgba(20, 224, 200, 0.6));
+}
+
+.weapon-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.weapon-kills {
+    font-size: 12px;
+    color: var(--accent2);
+    letter-spacing: 1px;
+}
+
+/* ==========================================
+   ЦИТАТА
+   ========================================== */
+.quote {
+    text-align: center;
+    padding: 80px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.quote-text {
+    font-size: clamp(20px, 3vw, 32px);
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: -0.5px;
+    color: #fff;
+}
+
+/* ==========================================
+   СВЯЗЬ
+   ========================================== */
+.contact-card {
+    text-align: center;
+    padding: 60px 30px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.contact-links {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ==========================================
+   ФУТЕР
+   ========================================== */
+.footer {
+    text-align: center;
+    padding: 60px 20px 50px;
+    border-top: 1px solid var(--glass-border);
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-name {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    margin-bottom: 8px;
+}
+
+/* ==========================================
+   ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ
+   ========================================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ==========================================
+   АДАПТИВ
+   ========================================== */
+@media (max-width: 900px) {
+    .header {
+        padding: 15px 25px;
+    }
+    .nav { gap: 20px; }
+    .hero { padding: 100px 20px 60px; }
+}
+
+@media (max-width: 700px) {
+    .header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+    }
+    .nav {
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+    .nav a { font-size: 12px; }
+    .logo { font-size: 22px; }
+
+    .hero { padding: 80px 20px 50px; }
+    .hero-title { letter-spacing: -0.5px; }
+    .hero-badge { font-size: 12px; padding: 6px 14px; }
+    .hero-scroll { margin-top: 50px; }
+
+    .section { padding: 50px 20px; }
+    .stat-value { font-size: 34px; }
+
+    .bg-grid { background-size: 45px 45px; }
+
+    .btn {
+        padding: 12px 24px;
+        font-size: 14px;
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+    }
+    .contact-links { flex-direction: column; align-items: center; }
+}
+
+@media (max-width: 420px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; }
+    .weapons-grid { grid-template-columns: repeat(2, 1fr); }
+    .avatar { font-size: 44px; }
+}
+
+/* ==========================================
+   REDUCED MOTION — уважаем настройки пользователя
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
